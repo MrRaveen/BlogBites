@@ -1,4 +1,5 @@
 import './bootstrap';
+import "trix";
 
 import Alpine from 'alpinejs';
 

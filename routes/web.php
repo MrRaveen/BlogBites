@@ -28,4 +28,9 @@ Route::get('/profile', [ProfileController::class, 'show'])
 Route::get('/create-blog', [createBlogController::class, 'index'])
     ->middleware(['auth', 'verified', 'role:admin|writter'])
     ->name('create.blog');
+
+    //create blogs part
+Route::get('/create-blog', [createBlogController::class, 'create'])->name('blog.create');
+Route::post('/create-blog', [createBlogController::class, 'store'])->name('blog.store');
+
 require __DIR__.'/auth.php';

@@ -36,7 +36,6 @@ public function getProfileImageAttribute($value)
     {
         return $value;
     }
-
     // Relationships
     public function blogs()
     {

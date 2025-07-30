@@ -12,6 +12,12 @@ class Blog extends Model
 
     protected $fillable = ['title', 'content', 'imageURL', 'categoryID', 'ownerID', 'blogStatus', 'lastUpdatedDate'];
 
+   //FIXME: NEW
+    public function tags()
+{
+    return $this->belongsToMany(BlogTagsContainer::class, 'blog_tags_pivot', 'blog_id', 'tag_id');
+}
+
     public function owner()
     {
         return $this->belongsTo(BlogUser::class, 'ownerID', 'userID');
@@ -35,11 +41,6 @@ class Blog extends Model
     public function savedByUsers()
     {
         return $this->hasMany(SavedBlog::class, 'blogID', 'blogID');
-    }
-
-    public function tags()
-    {
-        return $this->hasMany(BlogTag::class, 'blogID', 'blogID');
     }
 
     public function updateRequests()
