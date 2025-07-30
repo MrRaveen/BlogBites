@@ -27,6 +27,12 @@ $logout = function (Logout $logout) {
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    {{-- FIXME: TEST ONLY --}}
+                    @role('admin')
+                    <button name="testBtn" id="testBtn">
+                        Admin dashboard
+                    </button>
+                    @endrole
                 </div>
             </div>
 
