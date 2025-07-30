@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SocialLoginController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\createBlogController;
 
 // Atuth endpoints
 Route::get('/socialite/{driver}',[SocialLoginController::class,'toProvider'])->where('driver','github|google');//route for social login
@@ -18,9 +20,12 @@ Route::view('/dashboard2', 'dashboard')
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
-
-Route::view('profile', 'profile')
+//go to profile
+Route::get('/profile', [ProfileController::class, 'show'])
     ->middleware(['auth'])
     ->name('profile');
-
+//go to create blogs part
+Route::get('/create-blog', [createBlogController::class, 'index'])
+    ->middleware(['auth', 'verified', 'role:admin|writter'])
+    ->name('create.blog');
 require __DIR__.'/auth.php';

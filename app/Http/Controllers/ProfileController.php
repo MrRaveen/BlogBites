@@ -8,12 +8,22 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use App\Models\BlogUser;
+use Illuminate\Support\Facades\Cache;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
+    public function show()
+{
+    $userId = Auth::id(); // Get logged-in BlogUser ID
+    $cacheKey = 'bloguser_profile_' . $userId;
+    // Cache for 60 minutes
+    $profile = Cache::remember($cacheKey, now()->addMinutes(60), function () use ($userId) {
+        return BlogUser::withCount('blogs') // Add blog count
+            ->findOrFail($userId);
+    });
+    return view('profile', compact('profile'));
+}
     public function edit(Request $request): View
     {
         return view('profile.edit', [
@@ -21,9 +31,7 @@ class ProfileController extends Controller
         ]);
     }
 
-    /**
-     * Update the user's profile information.
-     */
+
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $request->user()->fill($request->validated());
@@ -37,9 +45,7 @@ class ProfileController extends Controller
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
-    /**
-     * Delete the user's account.
-     */
+
     public function destroy(Request $request): RedirectResponse
     {
         $request->validateWithBag('userDeletion', [

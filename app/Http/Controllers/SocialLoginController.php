@@ -15,9 +15,6 @@ class SocialLoginController extends Controller
     public function toProvider($driver){
         return Socialite::driver($driver)->redirect();
     }
-    // public function handleCallBack($driver): RedirectResponse{
-    //    return redirect()->route('dashboard2');
-    // }
     public function handleCallBack($driver): RedirectResponse
     {
         $socialUser = Socialite::driver($driver)->user();
@@ -27,8 +24,12 @@ class SocialLoginController extends Controller
         'userName' => $socialUser->getName() ?? 'Unknown',
         'providerType' => strtoupper($driver),
         'oAuthID' => $socialUser->getId(),
+        'profileImage' => $socialUser->getAvatar() ?? asset('images/default-profile.png')
     ]);
-
+    if ($user->profileImage !== $socialUser->getAvatar()) {
+    $user->profileImage = $socialUser->getAvatar();
+    $user->save();
+    }
     // Assign default role if new
     if (!$user->hasAnyRole(['reader', 'admin', 'writter'])) {
         $user->assignRole('reader');
