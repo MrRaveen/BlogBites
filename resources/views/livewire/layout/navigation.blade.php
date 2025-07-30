@@ -1,47 +1,84 @@
 <?php
-
 use App\Livewire\Actions\Logout;
-
 $logout = function (Logout $logout) {
     $logout();
     $this->redirect('/', navigate: true);
 };
-
 ?>
-{{-- TODO: USE THIS --}}
-{{-- auth()->user()->name --}}
 <nav x-data="{ open: false }" class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
-                <!-- Logo -->
+               <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}" wire:navigate>
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
                     </a>
                 </div>
+                 <div class="hidden sm:ms-0 sm:flex items-center space-x-1">
+                    @role('reader')
+                     <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-500 text-white">
+                     Reader
+                     </span>
+                    @endrole
 
+                    @role('writter')
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-500 text-white">
+                    Writter
+                    </span>
+                    @endrole
+
+                    @role('admin')
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-500 text-white">
+                    Admin
+                    </span>
+                    @endrole
+                </div>
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    {{-- FIXME: TEST ONLY --}}
-                    @role('admin')
-                    <button name="testBtn" id="testBtn">
-                        Admin dashboard
-                    </button>
-                    @endrole
                 </div>
-            </div>
+                <!-- Gap between logo and search bar -->
+                <div class="w-4"></div>
 
+                <!-- Search Bar -->
+                <div class="hidden sm:flex items-center ms-6">
+                    <form method="GET" class="flex">
+                        <input
+                            type="text"
+                            name="query"
+                            placeholder="Search blogs..."
+                            class="px-3 py-2 rounded-l-md border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-900 dark:text-gray-200"
+                        >
+                        <button
+                            type="submit"
+                            class="px-4 py-2 bg-indigo-600 text-white rounded-r-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        >
+                            Search
+                        </button>
+                    </form>
+                </div>
+                <!-- End Search Bar -->
+                @role('reader')
+                <div class="hidden sm:ms-10 sm:flex">
+                    <a href="{{ route('dashboard') }}"
+                       wire:navigate
+                       class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-sm font-semibold rounded-lg shadow-md hover:from-indigo-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                        Become a Writer
+                    </a>
+                </div>
+                @endrole
+
+            </div>
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
-                            <div x-data="{{ json_encode(['name' => 'test']) }}" x-text="name" x-on:profile-updated.window="name = $event.detail.name"></div>
+                            <div x-data="{{ json_encode(['name' => auth()->user()->userName]) }}" x-text="name" x-on:profile-updated.window="name = $event.detail.name"></div>
 
                             <div class="ms-1">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -52,14 +89,24 @@ $logout = function (Logout $logout) {
                     </x-slot>
 
                     <x-slot name="content">
-                        <x-dropdown-link :href="route('profile')" wire:navigate>
-                            {{ __('Profile') }}
+                        @role('writter')
+                         <x-dropdown-link :href="route('profile')" wire:navigate>
+                            {{ __('View Profile') }}
+                        </x-dropdown-link>
+                        @endrole
+                         <x-dropdown-link :href="route('profile')" wire:navigate>
+                            {{ __('Saved Blogs') }}
                         </x-dropdown-link>
 
                         <!-- Authentication -->
                         <button wire:click="logout" class="w-full text-start">
                             <x-dropdown-link>
                                 {{ __('Log Out') }}
+                            </x-dropdown-link>
+                        </button>
+                        <button wire:click="logout" class="w-full text-start">
+                            <x-dropdown-link>
+                                {{ __('Help') }}
                             </x-dropdown-link>
                         </button>
                     </x-slot>
@@ -89,7 +136,7 @@ $logout = function (Logout $logout) {
         <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
             <div class="px-4">
-                <div class="font-medium text-base text-gray-800 dark:text-gray-200" x-data="{{ json_encode(['name' => 'test']) }}" x-text="name" x-on:profile-updated.window="name = $event.detail.name"></div>
+                <div class="font-medium text-base text-gray-800 dark:text-gray-200" x-data="{{ json_encode(['name' => auth()->user()->userName]) }}" x-text="name" x-on:profile-updated.window="name = $event.detail.name"></div>
                 <div class="font-medium text-sm text-gray-500">{{ 'raveen@gmail.com' }}</div>
             </div>
 
@@ -104,7 +151,15 @@ $logout = function (Logout $logout) {
                         {{ __('Log Out') }}
                     </x-responsive-nav-link>
                 </button>
+
+                <button wire:click="logout" class="w-full text-start">
+                    <x-responsive-nav-link>
+                        {{ __('Help') }}
+                    </x-responsive-nav-link>
+                </button>
             </div>
         </div>
     </div>
 </nav>
+
+

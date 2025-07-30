@@ -7,48 +7,37 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
 
 use function Livewire\Volt\state;
-
-state([
-    'name' => fn () => auth()->user()->name,
-    'email' => fn () => auth()->user()->email
-]);
-
-$updateProfileInformation = function () {
-    $user = Auth::user();
-
-    $validated = $this->validate([
-        'name' => ['required', 'string', 'max:255'],
-        'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
-    ]);
-
-    $user->fill($validated);
-
-    if ($user->isDirty('email')) {
-        $user->email_verified_at = null;
-    }
-
-    $user->save();
-
-    $this->dispatch('profile-updated', name: $user->name);
-};
-
-$sendVerification = function () {
-    $user = Auth::user();
-
-    if ($user->hasVerifiedEmail()) {
-        $this->redirectIntended(default: route('dashboard', absolute: false));
-
-        return;
-    }
-
-    $user->sendEmailVerificationNotification();
-
-    Session::flash('status', 'verification-link-sent');
-};
-
 ?>
 
 <section>
+    <header>
+        <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+            {{ __('Profile Information') }}
+        </h2>
+    </header>
+
+    <!-- User Profile Info Card -->
+    <div class="flex flex-col sm:flex-row items-center sm:items-start bg-white dark:bg-gray-800 rounded-lg shadow p-8 mb-6 min-h-[320px]">
+        <div class="flex justify-center items-center w-64 h-64 rounded-full bg-black text-white border-2 border-gray-400 mb-6 sm:mb-0 sm:mr-10">
+                    <img src="https://i.pravatar.cc/100?img=3" alt="User Profile Image" class="w-24 h-24 rounded-full border-2 border-indigo-500 mb-4 sm:mb-0 sm:mr-6">
+        </div>
+        <div class="flex-1 flex flex-col justify-center items-start">
+            <div class="text-3xl font-normal text-gray-900 dark:text-gray-100 mb-2">User name</div>
+            <div class="text-2xl font-normal text-gray-900 dark:text-gray-100 mb-2">Email</div>
+            <div class="text-2xl font-normal text-gray-900 dark:text-gray-100 mb-6">Blog post: <span class="font-bold">12</span></div>
+            <div class="flex gap-4">
+                <button class="px-4 py-2 border border-gray-300 dark:border-gray-500 bg-transparent text-white dark:text-white rounded hover:bg-gray-700 hover:text-white transition">
+                    View saved posts
+                </button>
+                <button class="px-4 py-2 border border-gray-300 dark:border-gray-500 bg-transparent text-white dark:text-white rounded hover:bg-gray-700 hover:text-white transition">
+                    Create post
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+{{-- <section>
     <header>
         <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
             {{ __('Profile Information') }}
@@ -98,4 +87,4 @@ $sendVerification = function () {
             </x-action-message>
         </div>
     </form>
-</section>
+</section> --}}
