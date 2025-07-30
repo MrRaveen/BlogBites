@@ -10,7 +10,7 @@ class Blog extends Model
     protected $primaryKey = 'blogID';
     public $timestamps = false;
 
-    protected $fillable = ['title', 'content', 'imageURL', 'categoryID', 'ownerID', 'blogStatus', 'lastUpdatedDate'];
+    protected $fillable = ['title','slug', 'content', 'imageURL', 'categoryID', 'ownerID', 'blogStatus', 'lastUpdatedDate'];
 
    //FIXME: NEW
     public function tags()
@@ -19,9 +19,9 @@ class Blog extends Model
 }
 
     public function owner()
-    {
-        return $this->belongsTo(BlogUser::class, 'ownerID', 'userID');
-    }
+{
+    return $this->belongsTo(BlogUser::class, 'ownerID', 'userID');
+}
 
     public function category()
     {
