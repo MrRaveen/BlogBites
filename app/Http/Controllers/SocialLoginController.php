@@ -12,6 +12,6 @@ class SocialLoginController extends Controller
         return Socialite::driver($driver)->redirect();
     }
     public function handleCallBack($driver): RedirectResponse{
-       return redirect()->route('dashboard2');
+       //return redirect()->route('dashboard2');
     }
 }
