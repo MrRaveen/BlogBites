@@ -61,30 +61,6 @@ form(LoginForm::class);
                     <span class="font-medium text-white">Continue with GitHub</span>
                 </a>
             </div>
-
-            <!-- Divider -->
-            <div class="flex items-center my-8">
-                <div class="flex-grow border-t border-gray-300"></div>
-                <span class="mx-4 text-gray-400 text-sm">OR</span>
-                <div class="flex-grow border-t border-gray-300"></div>
-            </div>
-
-            <!-- Traditional Login Option -->
-            <div class="text-center">
-                <a href="#" class="text-indigo-600 hover:text-indigo-800 font-medium transition-colors duration-300">
-                    Sign in with email and password
-                </a>
-            </div>
-        </div>
-
-        <!-- Footer -->
-        <div class="bg-gray-50 px-8 py-6 text-center">
-            <p class="text-gray-600 text-sm">
-                Don't have an account?
-                <a href="#" class="font-medium text-indigo-600 hover:text-indigo-800 ml-1 transition-colors duration-300">
-                    Create account
-                </a>
-            </p>
         </div>
     </div>
 </body>

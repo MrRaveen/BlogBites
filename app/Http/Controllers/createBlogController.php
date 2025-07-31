@@ -36,11 +36,15 @@ class CreateBlogController extends Controller
 
         // $imagePath = $request->file('image') ? $request->file('image')->store('blog-images', 'public') : null;
         //FIXME: TEST
+        // $image = $request->file('image');
+        // $filename = uniqid('blog_') . '.' . $image->getClientOriginalExtension();
+        // $imageResized = Image::make($image)->fit(800, 400)->encode(); // crop to 800x400
+        // Storage::disk('public')->put("blog-images/$filename", $imageResized);
+        // $imagePath = "blog-images/$filename";
         $image = $request->file('image');
-        $filename = uniqid('blog_') . '.' . $image->getClientOriginalExtension();
-        $imageResized = Image::make($image)->fit(800, 400)->encode(); // crop to 800x400
-        Storage::disk('public')->put("blog-images/$filename", $imageResized);
-        $imagePath = "blog-images/$filename";
+$filename = uniqid('blog_') . '.' . $image->getClientOriginalExtension();
+Storage::disk('public')->putFileAs('blog-images', $image, $filename);
+$imagePath = "blog-images/$filename";
 
         $blog = Blog::create([
     'title' => $validated['title'],

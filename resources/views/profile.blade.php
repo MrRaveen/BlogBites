@@ -32,7 +32,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         @forelse($profile->blogs as $blog)
             <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md overflow-hidden">
-                <img src="{{ asset('storage/' . $blog->imageURL) }}" class="w-full h-40 object-cover" alt="Blog Image">
+                <img src="{{ asset('storage/' . $blog->imageURL) }}" class="w-full h-40 object-cover" alt="{{$blog->imageURL}}">
 
                 <div class="p-4">
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-2">{{ $blog->title }}</h3>
@@ -78,12 +78,6 @@
             <p class="text-gray-600 dark:text-gray-300">You haven’t posted any blogs yet.</p>
         @endforelse
     </div>
-
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    <livewire:profile.delete-user-form />
-                </div>
-            </div>
         </div>
     </div>
     @else

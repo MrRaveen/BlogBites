@@ -11,6 +11,8 @@ use App\Http\Controllers\BecomeWritterController;
 use App\Http\Controllers\AdminPostRequestController;
 use App\Http\Controllers\AdminManageUsersController;
 use App\Http\Controllers\AdminManageWritterRequestController;
+use App\Http\Controllers\AdminManageBlogPostsController;
+use App\Http\Controllers\BlogController;
 
 // Atuth endpoints
 Route::get('/socialite/{driver}',[SocialLoginController::class,'toProvider'])->where('driver','github|google');//route for social login
@@ -104,5 +106,15 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::post('/writer-requests/{id}/approve', [AdminManageWritterRequestController::class, 'approve'])->name('admin.writer.approve');
     Route::post('/writer-requests/{id}/reject', [AdminManageWritterRequestController::class, 'reject'])->name('admin.writer.reject');
 });
-
+//admin manage blog posts
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+    Route::get('/manage-posts', [AdminManageBlogPostsController::class, 'index'])->name('admin.manage.posts');
+    Route::get('/manage-posts/{blogID}/edit', [AdminManageBlogPostsController::class, 'edit'])->name('admin.manage.posts.edit');
+    Route::put('/manage-posts/{blogID}', [AdminManageBlogPostsController::class, 'update'])->name('admin.manage.posts.update');
+    Route::delete('/manage-posts/{blogID}', [AdminManageBlogPostsController::class, 'destroy'])->name('admin.manage.posts.delete');
+    Route::post('/manage-posts/{blogID}/toggle-status', [AdminManageBlogPostsController::class, 'toggleStatus'])->name('admin.manage.posts.toggleStatus');
+});
+//search
+Route::get('/blogs/search', [App\Http\Controllers\searchBlogs::class, 'search'])->name('blogs.search');
+Route::get('/blogs/{blogID}', [BlogController::class, 'show'])->name('blogs.show2');
 require __DIR__.'/auth.php';

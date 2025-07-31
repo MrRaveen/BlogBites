@@ -13,11 +13,11 @@ $logout = function (Logout $logout) {
         <div class="flex justify-between h-16">
             <div class="flex">
                <!-- Logo -->
-                <div class="shrink-0 flex items-center">
+                {{-- <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}" wire:navigate>
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
                     </a>
-                </div>
+                </div> --}}
                  <div class="hidden sm:ms-0 sm:flex items-center space-x-1">
                     @role('reader')
                      <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-500 text-white">
@@ -47,26 +47,23 @@ $logout = function (Logout $logout) {
 
                 <!-- Search Bar -->
                 <div class="hidden sm:flex items-center ms-6">
-                    <form method="GET" class="flex">
+                   <form method="GET" action="{{ route('blogs.search') }}" class="flex">
                         <input
-                            type="text"
-                            name="query"
-                            placeholder="Search blogs..."
-                            class="px-3 py-2 rounded-l-md border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-900 dark:text-gray-200"
+                        type="text"
+                        name="query"
+                        placeholder="Search blogs..."
+                        value="{{ request('query') }}"
+                        class="px-3 py-2 rounded-l-md border border-gray-300 dark:border-gray-700"
                         >
-                        <button
-                            type="submit"
-                            class="px-4 py-2 bg-indigo-600 text-white rounded-r-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        >
-                            Search
-                        </button>
+                       <button
+        type="submit"
+        class="px-4 py-2 bg-indigo-600 text-white rounded-r-md hover:bg-indigo-700"
+    >
+        Search
+    </button>
                     </form>
                 </div>
                 <!-- End Search Bar -->
-
-
-
-
             </div>
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
@@ -111,8 +108,8 @@ $logout = function (Logout $logout) {
                             </x-dropdown-link>
                             @endrole
                             @role('admin')
-                            <x-dropdown-link :href="route('writer.request.form')" wire:navigate>
-                            {{ __('Manage Blog Posts') }}
+                            <x-dropdown-link :href="route('admin.manage.posts')" wire:navigate>
+                               {{ __('Manage Blog Posts') }}
                             </x-dropdown-link>
                             @endrole
                          <x-dropdown-link :href="route('saved.posts')" wire:navigate>
@@ -128,12 +125,6 @@ $logout = function (Logout $logout) {
         </x-dropdown-link>
     </button>
 </form>
-
-                        <button wire:click="logout" class="w-full text-start">
-                            <x-dropdown-link>
-                                {{ __('Help') }}
-                            </x-dropdown-link>
-                        </button>
                     </x-slot>
                 </x-dropdown>
             </div>
