@@ -38,11 +38,14 @@ class Blog extends Model
         return $this->hasMany(BlogLike::class, 'blogID', 'blogID');
     }
 
+    // public function savedByUsers()
+    // {
+    //     return $this->hasMany(SavedBlog::class, 'blogID', 'blogID');
+    // }
     public function savedByUsers()
-    {
-        return $this->hasMany(SavedBlog::class, 'blogID', 'blogID');
-    }
-
+{
+    return $this->belongsToMany(BlogUser::class, 'savedBlogs', 'blogID', 'userID');
+}
     public function updateRequests()
     {
         return $this->hasMany(UpdateBlogRequest::class, 'blogID', 'blogID');

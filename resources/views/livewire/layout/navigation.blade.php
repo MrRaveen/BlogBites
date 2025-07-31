@@ -1,10 +1,12 @@
 <?php
 use App\Livewire\Actions\Logout;
+
 $logout = function (Logout $logout) {
-    $logout();
-    $this->redirect('/', navigate: true);
+    $logout(); // logs out the user
+    $this->redirect('/', navigate: true); // redirects to home
 };
 ?>
+
 <nav x-data="{ open: false }" class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -62,15 +64,9 @@ $logout = function (Logout $logout) {
                     </form>
                 </div>
                 <!-- End Search Bar -->
-                @role('reader')
-                <div class="hidden sm:ms-10 sm:flex">
-                    <a href="{{ route('dashboard') }}"
-                       wire:navigate
-                       class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-sm font-semibold rounded-lg shadow-md hover:from-indigo-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
-                        Become a Writer
-                    </a>
-                </div>
-                @endrole
+
+
+
 
             </div>
             <!-- Settings Dropdown -->
@@ -94,16 +90,25 @@ $logout = function (Logout $logout) {
                             {{ __('View Profile') }}
                         </x-dropdown-link>
                         @endrole
-                         <x-dropdown-link :href="route('profile')" wire:navigate>
+                            @role('reader')
+                           <x-dropdown-link :href="route('writer.request.form')" wire:navigate>
+                            {{ __('Become a writter') }}
+                           </x-dropdown-link>
+                            @endrole
+                         <x-dropdown-link :href="route('saved.posts')" wire:navigate>
                             {{ __('Saved Blogs') }}
                         </x-dropdown-link>
 
                         <!-- Authentication -->
-                        <button wire:click="logout" class="w-full text-start">
-                            <x-dropdown-link>
-                                {{ __('Log Out') }}
-                            </x-dropdown-link>
-                        </button>
+                        <form method="POST" action="{{ route('logout') }}">
+    @csrf
+    <button type="submit" class="w-full text-start">
+        <x-dropdown-link>
+            {{ __('Log Out') }}
+        </x-dropdown-link>
+    </button>
+</form>
+
                         <button wire:click="logout" class="w-full text-start">
                             <x-dropdown-link>
                                 {{ __('Help') }}

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Cache;
 use App\Models\SavedBlog;
 use Illuminate\Support\Facades\Storage;
 use App\Models\BlogLike;
+use Intervention\Image\Facades\Image;
 
 
 class CreateBlogController extends Controller
@@ -33,7 +34,13 @@ class CreateBlogController extends Controller
             'tags' => 'array|nullable'
         ]);
 
-        $imagePath = $request->file('image') ? $request->file('image')->store('blog-images', 'public') : null;
+        // $imagePath = $request->file('image') ? $request->file('image')->store('blog-images', 'public') : null;
+        //FIXME: TEST
+        $image = $request->file('image');
+        $filename = uniqid('blog_') . '.' . $image->getClientOriginalExtension();
+        $imageResized = Image::make($image)->fit(800, 400)->encode(); // crop to 800x400
+        Storage::disk('public')->put("blog-images/$filename", $imageResized);
+        $imagePath = "blog-images/$filename";
 
         $blog = Blog::create([
     'title' => $validated['title'],
@@ -93,15 +100,34 @@ public function show($slug)
     return view('profile', compact('blog'));
 }
 
+// public function showSingleFun($slug)
+// {
+//     // Cache key
+//     $cacheKey = 'blog_slug_' . $slug;
+
+//     // Try to get from cache
+//     $blog = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($slug) {
+//         return Blog::where('slug', $slug)
+//             ->with([
+//                 'owner:userID,userName',
+//                 'category:categoryID,categoryName',
+//                 'tags:tagID,tagName',
+//                 'comments.user:userID,userName',
+//                 'likes',
+//                 'savedByUsers'
+//             ])
+//             ->withCount('likes')
+//             ->firstOrFail();
+//     });
+
+//     return view('viewBlog', compact('blog'));
+// }
 public function showSingleFun($slug)
 {
-    // Cache key
     $cacheKey = 'blog_slug_' . $slug;
 
-    // Try to get from cache
     $blog = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($slug) {
         return Blog::where('slug', $slug)
-            ->where('blogStatus', 'APPROVED')
             ->with([
                 'owner:userID,userName',
                 'category:categoryID,categoryName',
@@ -116,6 +142,7 @@ public function showSingleFun($slug)
 
     return view('viewBlog', compact('blog'));
 }
+
   public function viewSavedPosts()
 {
     $userId = Auth::id();
@@ -159,7 +186,14 @@ public function update(Request $request, $blogID)
         if ($blog->imageURL) {
             Storage::disk('public')->delete($blog->imageURL);
         }
-        $imagePath = $request->file('image')->store('blog-images', 'public');
+        // $imagePath = $request->file('image')->store('blog-images', 'public');
+        //FIXME: TEST
+          $image = $request->file('image');
+        $filename = uniqid('blog_') . '.' . $image->getClientOriginalExtension();
+        $imageResized = Image::make($image)->fit(800, 400)->encode(); // crop to 800x400
+        Storage::disk('public')->put("blog-images/$filename", $imageResized);
+        $imagePath = "blog-images/$filename";
+
         $blog->imageURL = $imagePath;
     }
 

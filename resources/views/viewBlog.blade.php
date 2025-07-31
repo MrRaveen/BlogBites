@@ -18,7 +18,9 @@
                     <div class="flex items-center text-sm text-gray-600 dark:text-gray-300 mb-4">
                         <span>By {{ $blog->owner->userName ?? 'Unknown' }}</span>
                         <span class="mx-2">•</span>
-                        <span>{{ $blog->created_at->format('M d, Y') }}</span>
+                        <span>
+                        {{ \Carbon\Carbon::parse($blog->lastUpdatedDate)->format('M d, Y') }}
+                         </span>
                         <span class="mx-2">•</span>
                         <span class="text-xs px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded">
                             {{ ucfirst($blog->category->categoryName ?? 'Uncategorized') }}
@@ -40,50 +42,71 @@
                     </div>
 
                     {{-- Likes & Save --}}
-                    <div class="flex justify-between items-center mt-6">
-                        <form method="POST" action="{{ route('blog.like', $blog->id) }}">
+                    {{-- <div class="flex justify-between items-center mt-6">
+                        <form method="POST" action="{{ route('blog.like', $blog->blogID) }}">
                             @csrf
                             <button type="submit" class="text-red-500 hover:text-red-700">
                                 ❤️ Like ({{ $blog->likes_count ?? 0 }})
                             </button>
                         </form>
 
-                        <form method="POST" action="{{ route('blog.save', $blog->id) }}">
-                            @csrf
-                            <button type="submit" class="text-blue-500 hover:text-blue-700">
-                                💾 Save
-                            </button>
-                        </form>
-                    </div>
+                    </div> --}}
+                    <div class="flex justify-between items-center mt-6 gap-4">
+    {{-- Like Button --}}
+    <form method="POST" action="{{ route('blog.like', $blog->blogID) }}">
+        @csrf
+        <button type="submit" class="text-red-500 hover:text-red-700">
+            ❤️ Like ({{ $blog->likes_count ?? 0 }})
+        </button>
+    </form>
+
+    {{-- Save/Unsave Button --}}
+    @auth
+        <form method="POST" action="{{ route('blog.save', $blog->blogID) }}">
+            @csrf
+            <button type="submit" class="text-blue-500 hover:text-blue-700">
+                💾 {{ $blog->savedByUsers->contains('userID', auth()->id()) ? 'Saved' : 'Save' }}
+            </button>
+        </form>
+    @endauth
+</div>
+
                 </div>
             </div>
 
             {{-- Comments Section --}}
-            <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 mt-6">
-                <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Comments</h2>
+<div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 mt-6">
+    <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Comments</h2>
 
-                {{-- Comments --}}
-                @forelse($blog->comments as $comment)
-                    <div class="mb-4 border-b border-gray-200 dark:border-gray-700 pb-4">
-                        <div class="text-sm text-gray-700 dark:text-gray-300">
-                            <strong>{{ $comment->user->userName ?? 'Anonymous' }}</strong>
-                            <span class="ml-2 text-xs text-gray-500">{{ $comment->created_at->diffForHumans() }}</span>
-                        </div>
-                        <p class="text-gray-900 dark:text-white mt-2">
-                            {{ $comment->content }}
-                        </p>
-                    </div>
-                @empty
-                    <p class="text-gray-600 dark:text-gray-300">No comments yet.</p>
-                @endforelse
+    @forelse($blog->comments as $comment)
+        <div class="mb-4 border-b border-gray-200 dark:border-gray-700 pb-4">
+            <div class="flex justify-between items-center">
+                <div class="text-sm text-gray-700 dark:text-gray-300">
+                    <strong>{{ $comment->user->userName ?? 'Anonymous' }}</strong>
+                    <span class="ml-2 text-xs text-gray-500">
+                        {{ $comment->created_at ? $comment->created_at->diffForHumans() : '' }}
+                    </span>
+                </div>
 
-                {{-- Add Comment Form --}}
-                <form method="POST" action="{{ route('blog.comment', $blog->id) }}" class="mt-4">
-                    @csrf
-                    <textarea name="content" class="w-full p-2 rounded border dark:bg-gray-900 dark:text-white" rows="3" placeholder="Leave a comment..."></textarea>
-                    <x-primary-button class="mt-2">Post Comment</x-primary-button>
-                </form>
+                {{-- Only show delete if comment belongs to current user --}}
+                @if(Auth::id() === $comment->userID)
+                    <form method="POST" action="{{ route('blog.comment.delete', $comment->commentID) }}" onsubmit="return confirm('Delete this comment?')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="text-sm text-red-600 hover:underline">Delete</button>
+                    </form>
+                @endif
             </div>
+
+            <p class="text-gray-900 dark:text-white mt-2">
+                {{ $comment->commentDescription }}
+            </p>
+        </div>
+    @empty
+        <p class="text-gray-600 dark:text-gray-300">No comments yet.</p>
+    @endforelse
+</div>
+
         </div>
     </div>
 </x-app-layout>
