@@ -52,12 +52,24 @@
                         <div class="flex items-center gap-3">
                             {{-- TODO: LATER
                             action="{{ route('blog.like', $blog->id) }}" --}}
-                            <form method="POST">
+                            @php
+                            $isLiked = in_array($blog->blogID, $likedBlogIDs ?? []);
+                            @endphp
+                            <form method="POST" action="{{ route('blog.like', $blog->blogID) }}">
                                 @csrf
                                 <button type="submit" class="text-red-500 hover:text-red-700">
-                                    ❤️ {{ $blog->likes_count ?? 0 }}
+                                   {{ $isLiked ? '💖' : '🤍' }} {{ $blog->likes_count ?? 0 }}
                                 </button>
                             </form>
+                            <div class="flex items-center gap-2 mt-2">
+    <a href="{{ route('blog.edit', $blog->blogID) }}" class="text-yellow-500 hover:underline">✏️ Edit</a>
+    <form action="{{ route('blog.delete', $blog->blogID) }}" method="POST" onsubmit="return confirm('Are you sure?')">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="text-red-500 hover:text-red-700">🗑️ Delete</button>
+    </form>
+</div>
+
                         </div>
                     </div>
                 </div>

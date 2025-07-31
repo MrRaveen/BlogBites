@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
 use App\Models\SavedBlog;
+use Illuminate\Support\Facades\Storage;
+use App\Models\BlogLike;
 
 
 class CreateBlogController extends Controller
@@ -51,13 +53,35 @@ class CreateBlogController extends Controller
         return redirect()->route('dashboard')->with('success', 'Blog created successfully!');
     }
 
-    public function profile()
+//     public function profile()
+// {
+//     //FIXME: TEST
+//     $likedBlogIDs = BlogLike::where('userID', Auth::id())->pluck('blogID')->toArray();
+//     $user = BlogUser::withCount('blogs')->with(['blogs' => function ($q) {
+//         $q->latest()->withCount('likes')->with('tags')->with('category')->withCount('likes');
+//     }])->findOrFail(Auth::id());
+
+//     //FIXME: TEST
+//     // return view('profile', ['profile' => $user]);
+//     return view('profile', ['profile' => $user, 'likedBlogIDs' => $likedBlogIDs]);
+
+// }
+public function profile()
 {
     $user = BlogUser::withCount('blogs')->with(['blogs' => function ($q) {
-        $q->latest()->withCount('likes')->with('tags')->with('category');
+        $q->latest()
+          ->withCount('likes') // count likes
+          ->with('tags')
+          ->with('category');
     }])->findOrFail(Auth::id());
 
-    return view('profile', ['profile' => $user]);
+    // 🆕 Get liked blog IDs for the current user
+    $likedBlogIDs = BlogLike::where('userID', Auth::id())->pluck('blogID')->toArray();
+
+    return view('profile', [
+        'profile' => $user,
+        'likedBlogIDs' => $likedBlogIDs
+    ]);
 }
 public function show($slug)
 {
@@ -108,4 +132,62 @@ public function showSingleFun($slug)
 
     return view('viewSavedPosts', compact('savedPosts'));
 }
+
+public function edit($blogID)
+{
+    $blog = Blog::where('blogID', $blogID)->where('ownerID', Auth::id())->firstOrFail();
+    $allCategories = BlogCategory::all();
+    $allTags = BlogTagsContainer::all();
+
+    return view('editBlog', compact('blog', 'allCategories', 'allTags'));
+}
+
+public function update(Request $request, $blogID)
+{
+    $blog = Blog::where('blogID', $blogID)->where('ownerID', Auth::id())->firstOrFail();
+
+    $validated = $request->validate([
+        'title' => 'required|max:60',
+        'content' => 'required',
+        'image' => 'nullable|image|max:2048',
+        'categoryID' => 'required|exists:blogCategory,categoryID',
+        'tags' => 'array|nullable'
+    ]);
+
+    // Handle new image
+    if ($request->hasFile('image')) {
+        if ($blog->imageURL) {
+            Storage::disk('public')->delete($blog->imageURL);
+        }
+        $imagePath = $request->file('image')->store('blog-images', 'public');
+        $blog->imageURL = $imagePath;
+    }
+
+    $blog->update([
+        'title' => $validated['title'],
+        'content' => $validated['content'],
+        'categoryID' => $validated['categoryID'],
+        'lastUpdatedDate' => now()
+    ]);
+
+    if ($request->filled('tags')) {
+        $blog->tags()->sync($validated['tags']);
+    }
+
+    return redirect()->route('profile')->with('success', 'Blog updated!');
+}
+
+public function destroy($blogID)
+{
+    $blog = Blog::where('blogID', $blogID)->where('ownerID', Auth::id())->firstOrFail();
+
+    if ($blog->imageURL) {
+        Storage::disk('public')->delete($blog->imageURL);
+    }
+
+    $blog->delete();
+    Cache::forget('bloguser_profile_' . Auth::id());
+    return redirect()->route('profile')->with('success', 'Blog deleted!');
+}
+
 }

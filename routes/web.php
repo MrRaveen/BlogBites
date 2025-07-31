@@ -39,9 +39,21 @@ Route::get('/blog/{slug}', [createBlogController::class, 'show'])->name('blog.sh
 //single post loading
 Route::get('/blogSingle/{slug}', [createBlogController::class, 'showSingleFun'])->name('showSingleBlogsEndpoint');
 
+//like the post
 Route::post('/blog/{id}/like', [BlogInteractionController::class, 'like'])->name('blog.like');
 
 Route::get('/saved-posts', [CreateBlogController::class, 'viewSavedPosts'])
     ->middleware(['auth']) // restrict to logged-in users
     ->name('saved.posts');
+
+    //update sections
+// Edit blog form
+Route::get('/blog/{blogID}/edit', [CreateBlogController::class, 'edit'])->name('blog.edit')->middleware(['auth']);
+
+// Update blog
+Route::put('/blog/{blogID}', [CreateBlogController::class, 'update'])->name('blog.update')->middleware(['auth']);
+
+// Delete blog
+Route::delete('/blog/{blogID}', [CreateBlogController::class, 'destroy'])->name('blog.delete')->middleware(['auth']);
+
 require __DIR__.'/auth.php';
