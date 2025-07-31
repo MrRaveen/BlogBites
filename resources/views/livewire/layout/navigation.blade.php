@@ -24,7 +24,6 @@ $logout = function (Logout $logout) {
                      Reader
                      </span>
                     @endrole
-
                     @role('writter')
                     <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-500 text-white">
                     Writter
@@ -94,6 +93,27 @@ $logout = function (Logout $logout) {
                            <x-dropdown-link :href="route('writer.request.form')" wire:navigate>
                             {{ __('Become a writter') }}
                            </x-dropdown-link>
+                            @endrole
+                            @role('admin')
+                            <x-dropdown-link :href="route('admin.post.requests')" wire:navigate>
+                            {{ __('Post requests') }}
+                            </x-dropdown-link>
+                            @endrole
+                           @role('admin')
+                            <x-dropdown-link :href="route('admin.users.index')" wire:navigate>
+                                {{ __('Manage Users') }}
+                             </x-dropdown-link>
+                            @endrole
+
+                             @role('admin')
+                            <x-dropdown-link :href="route('admin.writer.requests')" wire:navigate>
+                            {{ __('Writter Requests') }}
+                            </x-dropdown-link>
+                            @endrole
+                            @role('admin')
+                            <x-dropdown-link :href="route('writer.request.form')" wire:navigate>
+                            {{ __('Manage Blog Posts') }}
+                            </x-dropdown-link>
                             @endrole
                          <x-dropdown-link :href="route('saved.posts')" wire:navigate>
                             {{ __('Saved Blogs') }}

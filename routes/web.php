@@ -8,6 +8,9 @@ use App\Http\Controllers\BlogInteractionController;
 use App\Http\Controllers\ViewDashboardController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\BecomeWritterController;
+use App\Http\Controllers\AdminPostRequestController;
+use App\Http\Controllers\AdminManageUsersController;
+use App\Http\Controllers\AdminManageWritterRequestController;
 
 // Atuth endpoints
 Route::get('/socialite/{driver}',[SocialLoginController::class,'toProvider'])->where('driver','github|google');//route for social login
@@ -84,4 +87,22 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/become-writer', [BecomeWritterController::class, 'index'])->name('writer.request.form');
     Route::post('/become-writer', [BecomeWritterController::class, 'store'])->name('writer.request.submit');
 });
+//admin post audit
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+    Route::get('/post-requests', [AdminPostRequestController::class, 'index'])->name('admin.post.requests');
+    Route::post('/post-requests/{blogID}/approve', [AdminPostRequestController::class, 'approve'])->name('admin.post.approve');
+    Route::post('/post-requests/{blogID}/reject', [AdminPostRequestController::class, 'reject'])->name('admin.post.reject');
+});
+//admin manage users
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+    Route::get('/manage-users', [AdminManageUsersController::class, 'index'])->name('admin.users.index');
+    Route::put('/manage-users/{userID}', [AdminManageUsersController::class, 'updateUserRole'])->name('admin.user.updateRole');
+});
+//admin manage writter requests
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+    Route::get('/writer-requests', [AdminManageWritterRequestController::class, 'index'])->name('admin.writer.requests');
+    Route::post('/writer-requests/{id}/approve', [AdminManageWritterRequestController::class, 'approve'])->name('admin.writer.approve');
+    Route::post('/writer-requests/{id}/reject', [AdminManageWritterRequestController::class, 'reject'])->name('admin.writer.reject');
+});
+
 require __DIR__.'/auth.php';
