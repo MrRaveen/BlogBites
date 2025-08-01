@@ -32,7 +32,7 @@ Route::view('/dashboard2', 'dashboard')
 Route::get('dashboard', [ViewDashboardController::class, 'index'])->middleware(['auth'])->name('dashboard');
 //go to profile
 Route::get('/profile', [ProfileController::class, 'show'])
-    ->middleware(['auth'])
+    ->middleware(['auth','role:admin|writter'])
     ->name('profile');
 //go to create blogs part
 Route::get('/create-blog', [createBlogController::class, 'index'])
@@ -40,14 +40,14 @@ Route::get('/create-blog', [createBlogController::class, 'index'])
     ->name('create.blog');
 
     //create blogs part
-Route::get('/create-blog', [createBlogController::class, 'create'])->name('blog.create');
-Route::post('/create-blog', [createBlogController::class, 'store'])->name('blog.store');
+Route::get('/create-blog', [createBlogController::class, 'create'])->name('blog.create')->middleware(['auth', 'role:admin|writter']);
+Route::post('/create-blog', [createBlogController::class, 'store'])->name('blog.store')->middleware(['auth', 'role:admin|writter']);
 
 //post loading
 Route::get('/blog/{slug}', [createBlogController::class, 'show'])->name('blog.show');
 //single post loading
 Route::get('/blogSingle/{slug}', [createBlogController::class, 'showSingleFun'])->name('showSingleBlogsEndpoint');
-//FIXME: TEST
+
 Route::post('/blog/{id}/comment', [BlogInteractionController::class, 'comment'])->name('blog.comment')->middleware('auth');
 //remove comment
 Route::delete('/blog/comment/{commentID}', [BlogInteractionController::class, 'deleteComment'])->name('blog.comment.delete');
@@ -58,20 +58,20 @@ Route::post('/blog/{id}/like', [BlogInteractionController::class, 'like'])->name
 Route::post('/blog/{id}/Dashboardlike', [BlogInteractionController::class, 'DashboardPageLike'])->name('blog.DashboardLike');
 
 Route::get('/saved-posts', [CreateBlogController::class, 'viewSavedPosts'])
-    ->middleware(['auth']) // restrict to logged-in users
+    ->middleware(['auth'])
     ->name('saved.posts');
 
     //update sections
 // Edit blog form
-Route::get('/blog/{blogID}/edit', [CreateBlogController::class, 'edit'])->name('blog.edit')->middleware(['auth']);
+Route::get('/blog/{blogID}/edit', [CreateBlogController::class, 'edit'])->name('blog.edit')->middleware(['auth', 'role:admin|writter']);
 
 // Update blog
-Route::put('/blog/{blogID}', [CreateBlogController::class, 'update'])->name('blog.update')->middleware(['auth']);
+Route::put('/blog/{blogID}', [CreateBlogController::class, 'update'])->name('blog.update')->middleware(['auth', 'role:admin|writter']);
 
 // Delete blog
-Route::delete('/blog/{blogID}', [CreateBlogController::class, 'destroy'])->name('blog.delete')->middleware(['auth']);
+Route::delete('/blog/{blogID}', [CreateBlogController::class, 'destroy'])->name('blog.delete')->middleware(['auth', 'role:admin|writter']);
 //save posts
-Route::post('/blog/{id}/save', [BlogInteractionController::class, 'toggleSave'])->name('blog.save')->middleware('auth');
+Route::post('/blog/{id}/save', [BlogInteractionController::class, 'toggleSave'])->name('blog.save')->middleware(['auth']);
 use App\Http\Controllers\ViewSavedPostController;
 //view saved posts
 Route::get('/saved-posts', [ViewSavedPostController::class, 'index'])
@@ -85,7 +85,7 @@ Route::delete('/saved-posts/{blogID}', [ViewSavedPostController::class, 'removeS
     ->middleware(['auth'])
     ->name('blog.unsave');
 //writer request
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'role:reader'])->group(function () {
     Route::get('/become-writer', [BecomeWritterController::class, 'index'])->name('writer.request.form');
     Route::post('/become-writer', [BecomeWritterController::class, 'store'])->name('writer.request.submit');
 });
@@ -115,6 +115,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::post('/manage-posts/{blogID}/toggle-status', [AdminManageBlogPostsController::class, 'toggleStatus'])->name('admin.manage.posts.toggleStatus');
 });
 //search
-Route::get('/blogs/search', [App\Http\Controllers\searchBlogs::class, 'search'])->name('blogs.search');
-Route::get('/blogs/{blogID}', [BlogController::class, 'show'])->name('blogs.show2');
+Route::get('/blogs/search', [App\Http\Controllers\searchBlogs::class, 'search'])->name('blogs.search')->middleware(['auth']);
+Route::get('/blogs/{blogID}', [BlogController::class, 'show'])->name('blogs.show2')->middleware(['auth']);
 require __DIR__.'/auth.php';
