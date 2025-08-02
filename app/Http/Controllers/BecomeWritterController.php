@@ -20,9 +20,7 @@ class BecomeWritterController extends Controller
         $roles = $user->getRoleNames();
         $user = Auth::user();
         $exists = WritterRequest::where('userID', $userId)->where('requestSatus','PENDING')->first();
-        //$existsApproved = WritterRequest::where('userID', $userId)->where('requestStatus','APPROVED')->first();
         if($roles == ['reader'] && $exists) {
-            // return back()->with('error', 'You are already a writer.');
             return back()->with('error', 'You have already submitted a writer request.');
         }else{
              WritterRequest::create([
@@ -31,13 +29,6 @@ class BecomeWritterController extends Controller
             ]);
             return redirect()->route('dashboard')->with('success', 'Your request has been submitted to the admin.');
         }
-        // else if($roles == ['reader'] && $existsApproved){
-        //      WritterRequest::create([
-        //     'userID' => $userId,
-        //     'requestSatus' => 'pending',
-        //     ]);
-        //     return redirect()->route('dashboard')->with('success', 'Your request has been submitted to the admin.');
-        // }
     }
 }
 
