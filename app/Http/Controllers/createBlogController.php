@@ -11,7 +11,10 @@ use Illuminate\Support\Facades\Cache;
 use App\Models\SavedBlog;
 use Illuminate\Support\Facades\Storage;
 use App\Models\BlogLike;
-use Intervention\Image\Facades\Image;
+// use Intervention\Image\Facades\Image;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver as GdDriver;
+
 
 
 class CreateBlogController extends Controller
@@ -41,11 +44,12 @@ class CreateBlogController extends Controller
         // $imageResized = Image::make($image)->fit(800, 400)->encode(); // crop to 800x400
         // Storage::disk('public')->put("blog-images/$filename", $imageResized);
         // $imagePath = "blog-images/$filename";
-        $image = $request->file('image');
-$filename = uniqid('blog_') . '.' . $image->getClientOriginalExtension();
-Storage::disk('public')->putFileAs('blog-images', $image, $filename);
-$imagePath = "blog-images/$filename";
-
+           $image = $request->file('image');
+    $filename = uniqid('blog_') . '.' . $image->getClientOriginalExtension();
+    $manager = new ImageManager(new GdDriver());
+    $resized = $manager->read($image)->cover(800, 400)->toJpeg();
+    Storage::disk('public')->put("blog-images/$filename", $resized);
+    $imagePath = "blog-images/$filename";
         $blog = Blog::create([
     'title' => $validated['title'],
     'slug' => Str::slug($validated['title']) . '-' . uniqid(),
@@ -63,20 +67,6 @@ $imagePath = "blog-images/$filename";
         Cache::forget('bloguser_profile_' . Auth::id());
         return redirect()->route('dashboard')->with('success', 'Blog created successfully!');
     }
-
-//     public function profile()
-// {
-//     //FIXME: TEST
-//     $likedBlogIDs = BlogLike::where('userID', Auth::id())->pluck('blogID')->toArray();
-//     $user = BlogUser::withCount('blogs')->with(['blogs' => function ($q) {
-//         $q->latest()->withCount('likes')->with('tags')->with('category')->withCount('likes');
-//     }])->findOrFail(Auth::id());
-
-//     //FIXME: TEST
-//     // return view('profile', ['profile' => $user]);
-//     return view('profile', ['profile' => $user, 'likedBlogIDs' => $likedBlogIDs]);
-
-// }
 public function profile()
 {
     $user = BlogUser::withCount('blogs')->with(['blogs' => function ($q) {
@@ -190,24 +180,19 @@ public function update(Request $request, $blogID)
         if ($blog->imageURL) {
             Storage::disk('public')->delete($blog->imageURL);
         }
-        // $imagePath = $request->file('image')->store('blog-images', 'public');
-        //FIXME: TEST
-          $image = $request->file('image');
-        $filename = uniqid('blog_') . '.' . $image->getClientOriginalExtension();
-        $imageResized = Image::make($image)->fit(800, 400)->encode(); // crop to 800x400
-        Storage::disk('public')->put("blog-images/$filename", $imageResized);
-        $imagePath = "blog-images/$filename";
-
-        $blog->imageURL = $imagePath;
+        $image = $request->file('image');
+    $filename = uniqid('blog_') . '.' . $image->getClientOriginalExtension();
+    $manager = new ImageManager(new GdDriver());
+    $resized = $manager->read($image)->cover(800, 400)->toJpeg();
+    Storage::disk('public')->put("blog-images/$filename", $resized);
     }
-
     $blog->update([
         'title' => $validated['title'],
         'content' => $validated['content'],
         'categoryID' => $validated['categoryID'],
+        'imageURL'=> "blog-images/$filename",
         'lastUpdatedDate' => now()
     ]);
-
     if ($request->filled('tags')) {
         $blog->tags()->sync($validated['tags']);
     }

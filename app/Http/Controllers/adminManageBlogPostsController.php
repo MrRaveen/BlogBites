@@ -6,8 +6,10 @@ use App\Models\Blog;
 use App\Models\BlogCategory;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
+//use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Cache;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver as GdDriver;
 
 class AdminManageBlogPostsController extends Controller
 {
@@ -67,10 +69,12 @@ public function index()
     // Storage::put("public/blog-images/{$filename}", $resizedImage);
 
     // $blog->imageURL = "blog-images/{$filename}";
-     $image = $request->file('image');
-$filename = uniqid('blog_') . '.' . $image->getClientOriginalExtension();
-Storage::disk('public')->putFileAs('blog-images', $image, $filename);
-$imagePath = "blog-images/$filename";
+        $image = $request->file('image');
+    $filename = uniqid('blog_') . '.' . $image->getClientOriginalExtension();
+    $manager = new ImageManager(new GdDriver());
+    $resized = $manager->read($image)->cover(800, 400)->toJpeg();
+    Storage::disk('public')->put("blog-images/$filename", $resized);
+    $imagePath = "blog-images/$filename";
 }
             $blog->imageURL = str_replace('public/', '', $imagePath);
         }
