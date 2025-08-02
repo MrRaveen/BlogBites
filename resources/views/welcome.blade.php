@@ -1,17 +1,35 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-        <title>BlogBites</title>
+    <title>{{ $meta_title ?? 'BlogBites' }}</title>
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="{{ $meta_description ?? 'BlogBites is your go-to platform to explore insightful blogs, connect with writers, and discover content tailored to your interests.' }}" />
+    <meta name="keywords" content="{{ $meta_keywords ?? 'BlogBites, blogs, writers, community, Laravel blog, blogging platform, latest posts, author follow' }}" />
+    <meta name="author" content="BlogBites Team" />
+    <meta name="robots" content="index, follow" />
 
-        <!-- Styles -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Open Graph / Facebook -->
+    <meta property="og:title" content="{{ $meta_title ?? 'BlogBites — Explore & Engage with Insightful Blogs' }}" />
+    <meta property="og:description" content="{{ $meta_description ?? 'BlogBites is your go-to platform to explore insightful blogs, connect with writers, and discover content tailored to your interests.' }}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="{{ url()->current() }}" />
+    <meta property="og:image" content="{{ $meta_og_image ?? asset('images/blogbites-og-image.jpg') }}" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{ $meta_title ?? 'BlogBites — Explore & Engage with Insightful Blogs' }}" />
+    <meta name="twitter:description" content="{{ $meta_description ?? 'BlogBites is your go-to platform to explore insightful blogs, connect with writers, and discover content tailored to your interests.' }}" />
+    <meta name="twitter:image" content="{{ $meta_twitter_image ?? asset('images/blogbites-twitter-image.jpg') }}" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
+    <!-- Styles -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="antialiased font-sans">
         <div class="bg-gray-50 text-black/50 dark:bg-black dark:text-white/50">

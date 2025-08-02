@@ -1,3 +1,17 @@
+{{-- SEO Metadata --}}
+@section('title', 'Dashboard - Your Blog Activities')
+@section('meta_description', 'Manage and view your latest blog posts, likes, and comments directly from your dashboard.')
+@section('meta_keywords', 'dashboard, blog, user panel, comments, likes, blogging platform')
+@section('meta_author', auth()->user()->userName ?? 'Blog User')
+
+@section('og_title', 'Your Dashboard - My Blog Platform')
+@section('og_description', 'Check out your recent blog activity, posts, and interactions on your dashboard.')
+@section('og_image', asset('images/dashboard-preview.jpg')) {{-- Optional image path --}}
+@section('og_type', 'profile')
+
+@section('twitter_title', 'Your Blog Dashboard')
+@section('twitter_description', 'View and manage your blog activity with likes, comments, and posts.')
+@section('twitter_image', asset('images/dashboard-preview.jpg'))
 <x-app-layout>
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
