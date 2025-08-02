@@ -19,10 +19,9 @@ class AdminManageWritterRequestController extends Controller
         $request = WritterRequest::findOrFail($id);
         $request->requestSatus = 'approved';
         $request->save();
-
         $user = BlogUser::find($request->userID);
-        $user->assignRole('writter');
-
+        // $user->assignRole('writter');
+        $user->syncRoles('writter');
         return redirect()->back()->with('success', 'Writer request approved.');
     }
 
