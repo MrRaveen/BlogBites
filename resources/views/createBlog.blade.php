@@ -11,20 +11,20 @@
 
             <div class="mb-4">
                 <label class="block">Title</label>
-                <input name="title" type="text" class="w-full border rounded p-2" value="{{ old('title') }}">
+                <input name="title" type="text" class="w-full border rounded p-2" value="{{ old('title') }}" required>
                 @error('title') <span class="text-red-500">{{ $message }}</span> @enderror
             </div>
 
             <div class="mb-4">
                 <label class="block mb-2">Content</label>
-                <input id="x" type="hidden" name="content" value="{{ old('content') }}">
+                <input id="x" type="hidden" name="content" value="{{ old('content') }}" required>
                 <trix-editor input="x"></trix-editor>
                 @error('content') <span class="text-red-500">{{ $message }}</span> @enderror
             </div>
 
             <div class="mb-4">
                 <label class="block">Image</label>
-                <input name="image" type="file" class="w-full">
+                <input name="image" type="file" class="w-full" required>
                 @error('image') <span class="text-red-500">{{ $message }}</span> @enderror
             </div>
 

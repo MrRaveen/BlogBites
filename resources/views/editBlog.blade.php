@@ -10,7 +10,7 @@
     {{-- Title --}}
     <div>
         <label class="block text-gray-700 dark:text-white font-semibold mb-1">Title</label>
-        <input type="text" name="title" value="{{ old('title', $blog->title) }}" class="w-full p-2 rounded dark:bg-gray-900 dark:text-white border border-gray-300 dark:border-gray-600">
+        <input type="text" name="title" value="{{ old('title', $blog->title) }}" class="w-full p-2 rounded dark:bg-gray-900 dark:text-white border border-gray-300 dark:border-gray-600" required>
         @error('title') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
     </div>
 
@@ -20,7 +20,7 @@
         @if($blog->imageURL)
             <img src="{{ asset('storage/' . $blog->imageURL) }}" alt="Current Image" class="h-40 w-auto rounded mb-2 shadow">
         @endif
-        <input type="file" name="image" class="w-full text-sm text-gray-500 dark:text-gray-300">
+        <input type="file" name="image" class="w-full text-sm text-gray-500 dark:text-gray-300" required>
         @error('image') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
     </div>
 
@@ -52,7 +52,7 @@
     {{-- Content with Trix --}}
     <div>
         <label class="block text-gray-700 dark:text-white font-semibold mb-1">Content</label>
-        <input id="x-content" type="hidden" name="content" value="{{ old('content', $blog->content) }}">
+        <input id="x-content" type="hidden" name="content" value="{{ old('content', $blog->content) }}" required>
         <trix-editor input="x-content" class="trix-content bg-white dark:bg-gray-900 dark:text-white rounded p-2 shadow-sm border border-gray-300 dark:border-gray-600"></trix-editor>
         @error('content') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
     </div>

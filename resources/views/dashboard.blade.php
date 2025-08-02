@@ -40,7 +40,7 @@
                             {{-- Comment Form --}}
                             <form method="POST" action="{{ route('blog.comment', $blog->blogID) }}" class="mt-3">
                                 @csrf
-                                <textarea name="commentDescription" class="w-full p-2 rounded text-sm dark:bg-gray-800 dark:text-white" placeholder="Write a comment..." rows="2"></textarea>
+                                <textarea name="commentDescription" class="w-full p-2 rounded text-sm dark:bg-gray-800 dark:text-white" placeholder="Write a comment..." rows="2" required></textarea>
                                 <x-primary-button class="mt-2">Comment</x-primary-button>
                             </form>
 

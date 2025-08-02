@@ -21,7 +21,7 @@
 
             <div class="mb-4">
                 <label class="block font-medium text-gray-700 mb-2">Content</label>
-                <input id="content" type="hidden" name="content" value="{{ old('content', $blog->content) }}">
+                <input id="content" type="hidden" name="content" value="{{ old('content', $blog->content) }}" required>
                 <trix-editor input="content"></trix-editor>
                 @error('content') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
             </div>
