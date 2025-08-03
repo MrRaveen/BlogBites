@@ -12,7 +12,7 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
         {{-- FIXME: test --}}
-         {{-- SEO Metadata --}}
+        {{-- SEO Metadata --}}
     <title>@yield('title', 'My Blog Platform')</title>
     <meta name="description" content="@yield('meta_description', 'Welcome to our Laravel blog platform. Read and share high-quality blogs written by our community.')">
     <meta name="keywords" content="@yield('meta_keywords', 'laravel, blog, platform, posts, reading, writing')">
