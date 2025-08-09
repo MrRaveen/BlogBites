@@ -16,6 +16,8 @@ BlogBites is a modern Laravel-based blogging platform that enables users to read
 ![alt text](image-1.png)
 ![alt text](image-2.png)
 ![alt text](image-3.png)
+<img width="635" height="309" alt="image" src="https://github.com/user-attachments/assets/4a393f40-2afb-4bbf-9d8e-a0e4bfb15e0f" />
+
 
 ## Requirements
 
