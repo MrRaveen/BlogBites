@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\SavedBlog;
 use App\Models\BlogComment;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\commentEmail;
 
 class BlogInteractionController extends Controller
 {
@@ -63,6 +65,15 @@ class BlogInteractionController extends Controller
         'commentDescription' => $request->commentDescription
     ]);
     Cache::flush();
+    //get the username
+    $userObj = \App\Models\BlogUser::findOrFail(Auth::id());
+    $username = $userObj->userName;
+    //send an email to the writter
+    $ownerID = $blog->ownerID;
+    $writterEmailObj = \App\Models\BlogUser::findOrFail($ownerID);
+    $writterEmail = $writterEmailObj->email;
+    //send mail process
+    Mail::to($writterEmail)->send(new commentEmail($username,$request->commentDescription));
     return back()->with('success', 'Comment added!');
 }
 
