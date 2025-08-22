@@ -2,6 +2,9 @@
 
 BlogBites is a modern Laravel-based blogging platform that enables users to read, write, and manage articles. It features a robust writer request system, user authentication, and a clean, responsive UI.
 
+## Video demo link
+https://youtu.be/rv2aiEDsYVQ
+
 ## Features
 
 - User registration and authentication
